@@ -4,6 +4,7 @@ import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerI
 import * as URL from "../const.js";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { createStackNavigator } from "@react-navigation/stack";
+import axios from "axios";
 import Header from "../Header";
 
 const Stack = createStackNavigator();
@@ -11,34 +12,27 @@ const screenSize = Dimensions.get("window");
 let width = screenSize.width;
 if (width > 450) width = 450;
 
-// const MyStack = () => {
-//     return (
-//         <Stack.Navigator headerMode="none">
-//             <Stack.Screen name="ItemList" component={ItemList} />
-//             <Stack.Screen name="ChosenItem" component={ChosenItem} />
-//         </Stack.Navigator>
-//     );
-// };
-
 const ItemList = ({ navigation }) => {
     const [dataLoding, finishLoading] = useState(true);
-
-    const Talzik = createDrawerNavigator();
+    const [Acounts, setAcounts] = useState();
     let [newsData, SetData] = useState();
+
     useEffect(() => {
-        fetch(URL.Solutions)
-            .then((response) => response.json())
-            .then((data) => SetData(data))
-            .catch((error) => console.error(error))
-            .finally(() => {
-                finishLoading(false);
-            });
+        axios({
+            method: "GET",
+            url: URL.GetAccount,
+            headers: {
+                "Content-Type": URL.Application,
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        })
+            .then((response) => setAcounts(response.data))
+            .catch((err) => console.error(err));
     }, []);
 
     const listItemPress = (item) => {
         navigation.navigate("DisplayData", item);
     };
-    let numColumns = 1;
 
     return (
         <View style={{ flex: 1 }}>
@@ -88,7 +82,7 @@ const ItemList = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     listStyle: {
-        backgroundColor: "#e5e5e5",
+        //   backgroundColor: "#e5e5e5",
     },
     Card: {
         flex: 1,
