@@ -1,6 +1,6 @@
-export const HttpsClientBase = "https://hubcore.morabaaapps.com";
+//export const HttpsClientBase = "https://hubcore.morabaaapps.com";
 //export const HttpsClientBase = "http://127.0.0.1:5000";
-//export const HttpsClientBase = "http://127.0.0.1:7123";
+export const HttpsClientBase = "https://salereports.morabaaapps.com";
 export const Account = HttpsClientBase + "/api/v1/accounts";
 export const Currencie = HttpsClientBase + "/api/v1/currencies";
 export const Payments = HttpsClientBase + "/api/v1/bonds/payments";

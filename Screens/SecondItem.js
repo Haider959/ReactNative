@@ -185,13 +185,13 @@ const cardStyle = StyleSheet.create({
 export default ItemList;
 
 // useEffect(() => {
-//     // fetch(URL.Solutions)
-//     //     .then((response) => response.json())
-//     //     .then((data) => SetData(data))
-//     //     .catch((error) => console.error(error))
-//     //     .finally(() => {
-//     //         finishLoading(false);
-//     //     });
+//     fetch(URL.Solutions)
+//         .then((response) => response.json())
+//         .then((data) => SetData(data))
+//         .catch((error) => console.error(error))
+//         .finally(() => {
+//             finishLoading(false);
+//         });
 // }, []);
 
 // function ChosenItem({ route, navigation }) {
@@ -202,12 +202,3 @@ export default ItemList;
 //         </View>
 //     );
 // }
-
-// const MyStack = () => {
-//     return (
-//         <Stack.Navigator headerMode="none">
-//             <Stack.Screen name="ItemList" component={ItemList} />
-//             <Stack.Screen name="ChosenItem" component={ChosenItem} />
-//         </Stack.Navigator>
-//     );
-// };

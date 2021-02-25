@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import Background from "../components/Background";
@@ -12,10 +12,20 @@ import { emailValidator } from "../helpers/emailValidator";
 import { passwordValidator } from "../helpers/passwordValidator";
 import * as Web from "./.././../Web";
 import * as URL from "./.././../const";
+import { DrawerContentScrollView } from "@react-navigation/drawer";
 const LoginScreen = ({ navigation }) => {
     const [logName, setEmail] = useState({ value: "3", error: "" });
     const [password, setPassword] = useState({ value: "3", error: "" });
 
+    useEffect(() => {
+        Web.Refrash().then((token) => {
+            if (token)
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "MainPage" }],
+                });
+        });
+    }, []);
     const onLoginPressed = () => {
         const emailError = emailValidator(logName.value);
         const passwordError = passwordValidator(password.value);
@@ -26,16 +36,14 @@ const LoginScreen = ({ navigation }) => {
         }
 
         const loginRequest = { logName: logName.value, password: password.value };
-
         Web.Login(URL.Login, loginRequest)
             .then((token) => {
-                if (true) {
+                if (token) {
                     navigation.reset({
                         index: 0,
                         routes: [{ name: "MainPage" }],
                     });
                 }
-                //Navigation.navigate("ItemPage");
             })
             .catch((err) => console.log(err));
     };

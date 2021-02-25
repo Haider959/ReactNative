@@ -14,42 +14,50 @@ if (width > 450) width = 450;
 const ItemList = ({ navigation }) => {
     const [dataLoding, finishLoading] = useState(false);
     const [accounts, setAcounts] = useState([]);
-    //  const data = { name: "owl", logName: "3", password: "3", companies: "1" };
-    const data = { companyId: 1, pageIndex: 0, pageSize: 2 };
+    const data = { companyId: 1, pageIndex: listIndex, pageSize: 2 };
+    const [listIndex, setListIndex] = useState(0);
+
     useEffect(() => {
-        setTimeout(() => {
-            setAcounts(Generation.Add(20));
-        }, 20);
-        // console.log(accounts);
-        //     Web.Post(URL.SalesPerDay, data)
-        //         .then((_data) => {
-        //             //    setAcounts(_data.data);
-        //             // console.log(_data.data);
-        //             finishLoading(false);
-        //         })
-        //         .catch((err) => console.log(err));
+        const Switch = true;
+        Switch
+            ? setTimeout(() => {
+                  setAcounts(Generation.Add(20));
+              }, 20)
+            : Web.Post(URL.SalesPerDay, data)
+                  .then((_data) => {
+                      setAcounts(_data.data);
+                      finishLoading(false);
+                  })
+                  .catch((err) => console.log(err));
     }, []);
 
     const listItemPress = (item) => {
         navigation.navigate("DisplayData", item);
     };
     const endReched = () => {
-        console.log("LOLOLOLOLOLOLOLOLO");
+        I("End Reached", "g");
+        //   let acco = accounts;
+        //   acco.push();
+        //  setAcounts(accounts + Generation.Add(20));
+        //  console.log(accounts);
+        setListIndex(listIndex + 10);
+        I(listIndex);
     };
+
     return (
         <View>
             <Header title="ItemPage" />
-
+            <Button title="load" onPress={endReched} />
             {dataLoding ? (
                 <ActivityIndicator size="large" color="red" />
             ) : (
                 <FlatList
                     numColumns
                     style={styles.listStyle}
-                    keyExtractor={(itemKey) => itemKey.id.toString()}
+                    keyExtractor={(itemKey) => `${itemKey.id}`}
                     data={accounts}
-                    onEndReached={endReched}
-                    onEndReachedThreshold={0}
+                    //   onEndReached={endReched}
+                    //   onEndReachedThreshold={1}
                     renderItem={({ item }) => (
                         <TouchableOpacity style={styles.Card} onPress={() => listItemPress(item)}>
                             <View>
@@ -163,3 +171,8 @@ export default ItemList;
 //         placement: "right",
 //     };
 // };
+const I = (obj, color = "r") => {
+    if (color == "g") console.log(`%c- ${obj}`, "background-color: #00EBA2 ; color: #000000 ; font-weight: bold ; padding: 1px ;");
+    else if (color == "i") console.log(`%c- ${obj}`, "background-color: #F0BD07 ; color: #000000 ; font-weight: bold ; padding: 1px ;");
+    else if (color == "r") console.log(`%c- ${obj}`, "background-color: #e0005a ; color: #ffffff ; font-weight: bold ; padding: 1px ;");
+};

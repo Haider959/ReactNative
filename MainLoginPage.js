@@ -13,7 +13,7 @@ const MainLoginPage = () => {
         <Provider theme={theme}>
             <NavigationContainer>
                 <Stack.Navigator
-                    initialRouteName="MainPage"
+                    initialRouteName="LoginScreen"
                     screenOptions={{
                         headerShown: false,
                     }}>

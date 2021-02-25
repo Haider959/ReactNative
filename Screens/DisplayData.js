@@ -6,7 +6,7 @@ import { AntDesign } from "@expo/vector-icons";
 import Back from "../Headers/Back";
 function DisplayData({ route, navigation }) {
     const item = [route.params];
-    console.log(item);
+    //   console.log(item);
     return (
         <View>
             <Back title="DisplayData" navigation={navigation} />
