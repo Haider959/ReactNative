@@ -1,91 +1,97 @@
 import React, { useEffect, useState } from "react";
-import { TouchableOpacity, StyleSheet, Button, Text, View, ActivityIndicator, FlatList, Dimensions } from "react-native";
+import { TouchableWithoutFeedback, StyleSheet, Button, Text, View, ActivityIndicator, FlatList, Dimensions } from "react-native";
 import * as URL from "../const.js";
 import { AntDesign } from "@expo/vector-icons";
-import { createStackNavigator } from "@react-navigation/stack";
 import Header from "../Header";
 import * as Web from "../Web";
 import * as Generation from "../Generation";
-const Stack = createStackNavigator();
-const screenSize = Dimensions.get("window");
-let width = screenSize.width;
-if (width > 450) width = 450;
-
+import Moment from "moment";
 const ItemList = ({ navigation }) => {
-    const [dataLoding, finishLoading] = useState(false);
+    const [dataLoding, finishLoading] = useState(true);
     const [accounts, setAcounts] = useState([]);
-    const data = { companyId: 1, pageIndex: listIndex, pageSize: 2 };
-    const [listIndex, setListIndex] = useState(0);
-
+    const data = { companyId: 1, pageIndex: 0, pageSize: 20 };
+    const [listIndex, setListIndex] = useState(21);
+    const [Switch, setSwitch] = useState(false);
     useEffect(() => {
-        const Switch = true;
         Switch
             ? setTimeout(() => {
                   setAcounts(Generation.Add(20));
+                  finishLoading(true);
               }, 20)
-            : Web.Post(URL.SalesPerDay, data)
-                  .then((_data) => {
-                      setAcounts(_data.data);
-                      finishLoading(false);
-                  })
-                  .catch((err) => console.log(err));
-    }, []);
+            : setTimeout(() => {
+                  Web.Post(URL.SalesPerDay, data)
+                      .then((response) => {
+                          setAcounts(response.data);
+                          finishLoading(false);
+                      })
+                      .catch((err) => console.log(err));
+              }, 20);
+    }, [Switch]);
 
     const listItemPress = (item) => {
         navigation.navigate("DisplayData", item);
     };
-    const endReched = () => {
-        I("End Reached", "g");
-        //   let acco = accounts;
-        //   acco.push();
-        //  setAcounts(accounts + Generation.Add(20));
-        //  console.log(accounts);
-        setListIndex(listIndex + 10);
-        I(listIndex);
+    const loadMore = () => {
+        setListIndex(listIndex + 21);
+        const data = { companyId: 1, pageIndex: listIndex, pageSize: 20 };
+        if (listIndex < 110)
+            setTimeout(() => {
+                Web.Post(URL.SalesPerDay, data)
+                    .then((response) => {
+                        setAcounts([...accounts, ...response.data]);
+                        //   finishLoading(false);
+                    })
+                    .catch((err) => console.log(err));
+            }, 20);
+    };
+
+    const formatDateTime = (dt) => {
+        return Moment(dt).format("yyyy-MM-DD HH:mm");
     };
 
     return (
         <View>
             <Header title="ItemPage" />
-            <Button title="load" onPress={endReched} />
+            {/* <Button title="load" onPress={loadMore} /> */}
             {dataLoding ? (
                 <ActivityIndicator size="large" color="red" />
             ) : (
                 <FlatList
-                    numColumns
                     style={styles.listStyle}
                     keyExtractor={(itemKey) => `${itemKey.id}`}
                     data={accounts}
-                    //   onEndReached={endReched}
-                    //   onEndReachedThreshold={1}
+                    onEndReached={loadMore}
+                    onEndReachedThreshold={1}
                     renderItem={({ item }) => (
-                        <TouchableOpacity style={styles.Card} onPress={() => listItemPress(item)}>
-                            <View>
-                                <View style={styles.groped}>
-                                    <Text style={styles.constText}>المصاريف</Text>
-                                    <Text style={styles.expense}>{item.expense1} د.ع</Text>
-                                    <Text style={styles.expense}>$ {item.expense2}</Text>
+                        <TouchableWithoutFeedback onPress={() => listItemPress(item)}>
+                            <View style={styles.Card}>
+                                <View>
+                                    <View style={styles.groped}>
+                                        <Text style={styles.constText}>المصاريف</Text>
+                                        <Text style={styles.expense}>{item.expense1} د.ع</Text>
+                                        <Text style={styles.expense}>$ {item.expense2}</Text>
+                                    </View>
+                                    <View style={{ flexDirection: "row", margin: 5 }}>
+                                        <Text style={styles.constDate}>{formatDateTime(item.date)}</Text>
+                                        <AntDesign name="calendar" size={20} color="gray" />
+                                    </View>
                                 </View>
-                                <View style={{ flexDirection: "row", margin: 5 }}>
-                                    <Text style={styles.constDate}>{item.date}</Text>
-                                    <AntDesign name="calendar" size={20} color="gray" />
+                                <View
+                                    style={{
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
+                                    }}>
+                                    <View style={styles.groped}>
+                                        <Text style={styles.constText}>المبيعات والارجعات</Text>
+                                        <Text style={styles.sale}>{item.sale1} د.ع</Text>
+                                        <Text style={styles.sale}>$ {item.sale2}</Text>
+                                        <Text style={styles.constText}>الارباح</Text>
+                                        <Text style={styles.profit}>{item.profit1} د.ع</Text>
+                                        <Text style={styles.profit}>$ {item.profit2}</Text>
+                                    </View>
                                 </View>
                             </View>
-                            <View
-                                style={{
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                }}>
-                                <View style={styles.groped}>
-                                    <Text style={styles.constText}>المبيعات والارجعات</Text>
-                                    <Text style={styles.sale}>{item.sale1} د.ع</Text>
-                                    <Text style={styles.sale}>$ {item.sale2}</Text>
-                                    <Text style={styles.constText}>الارباح</Text>
-                                    <Text style={styles.profit}>{item.profit1} د.ع</Text>
-                                    <Text style={styles.profit}>$ {item.profit2}</Text>
-                                </View>
-                            </View>
-                        </TouchableOpacity>
+                        </TouchableWithoutFeedback>
                     )}
                 />
             )}
@@ -106,7 +112,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         backgroundColor: "#fff",
         marginTop: 8,
-        margin: 5,
+        marginHorizontal: 8,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
