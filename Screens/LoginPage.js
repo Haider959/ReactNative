@@ -3,43 +3,46 @@ import axios from "axios";
 import { Button, Dimensions, StyleSheet, Text, TextInput, View, FlatList, ScrollView, TouchableOpacity } from "react-native";
 import * as URL from "../const.js";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
-
 import Header from "../Header";
-const LoginPage = () => {
-    const loginClick = () => {
-        const loginRequest = { logName, password };
-        //   console.log(loginRequest);
-        sendData(URL.Login, loginRequest);
-    };
-    function sendData(Url, data) {
-        return axios({
-            method: "POST",
-            url: URL.Login,
-            data: JSON.stringify(data),
-            headers: {
-                "Content-Type": URL.Application,
-            },
-        })
-            .then((response) => {
-                console.log(response.data.token);
-                const token = response.data.token;
-                axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-                localStorage.setItem("token", token);
-            })
-            .catch((err) => console.error(err));
-    }
+import * as StoreData from "../StoreData";
+import * as Web from "../Web";
 
-    const getJson = () => {
-        axios({
-            method: "GET",
-            url: URL.Solutions,
-            headers: {
-                "Content-Type": URL.Application,
-            },
-        })
-            .then((response) => this.setState((this.owners = response.data)))
-            .catch((err) => console.error(err));
+const LoginPage = () => {
+    const [storg, setStorge] = useState("LOL");
+
+    const loginClick = () => {
+        Web.Login(URL.Login, { logName, password });
     };
+
+    // function sendData(Url, data) {
+    //     return axios({
+    //         method: "POST",
+    //         url: Url,
+    //         data: JSON.stringify(data),
+    //         headers: {
+    //             "Content-Type": URL.Application,
+    //         },
+    //     })
+    //         .then((response) => {
+    //             const token = response.data.token;
+    //             axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    //             StoreData.storeData("token", token);
+    //             StoreData.getData("token").then((val) => setStorge(val));
+    //         })
+    //         .catch((err) => console.error(err));
+    // }
+
+    // const getJson = () => {
+    //     axios({
+    //         method: "GET",
+    //         url: URL.Solutions,
+    //         headers: {
+    //             "Content-Type": URL.Application,
+    //         },
+    //     })
+    //         .then((response) => this.setState((this.owners = response.data)))
+    //         .catch((err) => console.error(err));
+    // };
 
     const [logName, setLogName] = useState("1");
     const [password, setPassword] = useState("1");
@@ -51,7 +54,7 @@ const LoginPage = () => {
             <View style={styles.MAinView}>
                 <View style={styles.horizontal}>
                     <TextInput defaultValue={logName} onChangeText={(text) => setLogName(text)} style={styles.itemText2} />
-                    <Text style={styles.itemText}>الاسم</Text>
+                    <Text style={styles.itemText}>الاسم{storg}</Text>
                 </View>
 
                 <View style={styles.horizontal}>

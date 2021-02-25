@@ -13,6 +13,7 @@ const Back = ({ title, navigation, icon = "arrow-forward" }) => {
             style={{ display: "flex", width: "100%", justifyContent: "flex-end", flexDirection: "row", backgroundColor: "#fafaf9" }}>
             <Text style={{ fontSize: 18, alignSelf: "center" }}>{title}</Text>
             <TouchableOpacity onPress={() => DrawerController(navigation)}>
+                {/* <AntDesign name="rightcircleo" size={30} color="#020204" style={{ marginHorizontal: 15 }} /> */}
                 <Ionicons name={icon} size={30} color="#020204" style={{ marginHorizontal: 15 }} />
             </TouchableOpacity>
         </Appbar.Header>

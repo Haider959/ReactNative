@@ -5,42 +5,22 @@ import { createStackNavigator } from "@react-navigation/stack";
 import * as URL from "../const.js";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import Header from "../Header";
+import * as Web from "../Web";
+
 const Stack = createStackNavigator();
 const screenSize = Dimensions.get("window");
 let width = screenSize.width;
 if (width > 450) width = 450;
 
-// function ChosenItem({ route, navigation }) {
-//     const item = route.params;
-//     return (
-//         <View>
-//             <Text style={{ justifyContent: "space-around", display: "flex" }}>{item.name}</Text>
-//         </View>
-//     );
-// }
-
-// const MyStack = () => {
-//     return (
-//         <Stack.Navigator headerMode="none">
-//             <Stack.Screen name="ItemList" component={ItemList} />
-//             <Stack.Screen name="ChosenItem" component={ChosenItem} />
-//         </Stack.Navigator>
-//     );
-// };
-
 const ItemList = ({ navigation }) => {
     const [dataLoding, finishLoading] = useState(true);
 
-    const Talzik = createDrawerNavigator();
     let [newsData, SetData] = useState();
     useEffect(() => {
-        fetch(URL.Solutions)
-            .then((response) => response.json())
-            .then((data) => SetData(data))
-            .catch((error) => console.error(error))
-            .finally(() => {
-                finishLoading(false);
-            });
+        const data = { companyId: 0, pageIndex: 0, pageSize: 5 };
+        Web.Refrash();
+        Web.Post(URL.SalesPerDay, data);
+        finishLoading(false);
     }, []);
 
     const listItemPress = (item) => {
@@ -203,3 +183,31 @@ const cardStyle = StyleSheet.create({
 });
 
 export default ItemList;
+
+// useEffect(() => {
+//     // fetch(URL.Solutions)
+//     //     .then((response) => response.json())
+//     //     .then((data) => SetData(data))
+//     //     .catch((error) => console.error(error))
+//     //     .finally(() => {
+//     //         finishLoading(false);
+//     //     });
+// }, []);
+
+// function ChosenItem({ route, navigation }) {
+//     const item = route.params;
+//     return (
+//         <View>
+//             <Text style={{ justifyContent: "space-around", display: "flex" }}>{item.name}</Text>
+//         </View>
+//     );
+// }
+
+// const MyStack = () => {
+//     return (
+//         <Stack.Navigator headerMode="none">
+//             <Stack.Screen name="ItemList" component={ItemList} />
+//             <Stack.Screen name="ChosenItem" component={ChosenItem} />
+//         </Stack.Navigator>
+//     );
+// };

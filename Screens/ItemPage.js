@@ -1,60 +1,65 @@
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity, StyleSheet, Button, Text, View, ActivityIndicator, FlatList, Dimensions } from "react-native";
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from "@react-navigation/drawer";
 import * as URL from "../const.js";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import { createStackNavigator } from "@react-navigation/stack";
-import axios from "axios";
 import Header from "../Header";
-
+import * as Web from "../Web";
+import * as Generation from "../Generation";
 const Stack = createStackNavigator();
 const screenSize = Dimensions.get("window");
 let width = screenSize.width;
 if (width > 450) width = 450;
 
 const ItemList = ({ navigation }) => {
-    const [dataLoding, finishLoading] = useState(true);
-    const [Acounts, setAcounts] = useState();
-    let [newsData, SetData] = useState();
-
+    const [dataLoding, finishLoading] = useState(false);
+    const [accounts, setAcounts] = useState([]);
+    //  const data = { name: "owl", logName: "3", password: "3", companies: "1" };
+    const data = { companyId: 1, pageIndex: 0, pageSize: 2 };
     useEffect(() => {
-        axios({
-            method: "GET",
-            url: URL.GetAccount,
-            headers: {
-                "Content-Type": URL.Application,
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-        })
-            .then((response) => setAcounts(response.data))
-            .catch((err) => console.error(err));
+        setTimeout(() => {
+            setAcounts(Generation.Add(20));
+        }, 20);
+        // console.log(accounts);
+        //     Web.Post(URL.SalesPerDay, data)
+        //         .then((_data) => {
+        //             //    setAcounts(_data.data);
+        //             // console.log(_data.data);
+        //             finishLoading(false);
+        //         })
+        //         .catch((err) => console.log(err));
     }, []);
 
     const listItemPress = (item) => {
         navigation.navigate("DisplayData", item);
     };
-
+    const endReched = () => {
+        console.log("LOLOLOLOLOLOLOLOLO");
+    };
     return (
-        <View style={{ flex: 1 }}>
+        <View>
             <Header title="ItemPage" />
+
             {dataLoding ? (
                 <ActivityIndicator size="large" color="red" />
             ) : (
                 <FlatList
                     numColumns
-                    style={[styles.listStyle, { flex: 1 }]}
-                    keyExtractor={(itemKey) => itemKey.id}
-                    data={newsData}
+                    style={styles.listStyle}
+                    keyExtractor={(itemKey) => itemKey.id.toString()}
+                    data={accounts}
+                    onEndReached={endReched}
+                    onEndReachedThreshold={0}
                     renderItem={({ item }) => (
                         <TouchableOpacity style={styles.Card} onPress={() => listItemPress(item)}>
                             <View>
                                 <View style={styles.groped}>
                                     <Text style={styles.constText}>المصاريف</Text>
-                                    <Text style={styles.spends}>{item.name} د.ع</Text>
-                                    <Text style={styles.spends}>$ {item.mainId}</Text>
+                                    <Text style={styles.expense}>{item.expense1} د.ع</Text>
+                                    <Text style={styles.expense}>$ {item.expense2}</Text>
                                 </View>
                                 <View style={{ flexDirection: "row", margin: 5 }}>
-                                    <Text style={styles.constDate}>2021-02-14</Text>
+                                    <Text style={styles.constDate}>{item.date}</Text>
                                     <AntDesign name="calendar" size={20} color="gray" />
                                 </View>
                             </View>
@@ -65,11 +70,11 @@ const ItemList = ({ navigation }) => {
                                 }}>
                                 <View style={styles.groped}>
                                     <Text style={styles.constText}>المبيعات والارجعات</Text>
-                                    <Text style={styles.sailse}>{item.name} د.ع</Text>
-                                    <Text style={styles.sailse}>$ {item.mainId}</Text>
+                                    <Text style={styles.sale}>{item.sale1} د.ع</Text>
+                                    <Text style={styles.sale}>$ {item.sale2}</Text>
                                     <Text style={styles.constText}>الارباح</Text>
-                                    <Text style={styles.gaint}>{item.name} د.ع</Text>
-                                    <Text style={styles.gaint}>$ {item.accountId}</Text>
+                                    <Text style={styles.profit}>{item.profit1} د.ع</Text>
+                                    <Text style={styles.profit}>$ {item.profit2}</Text>
                                 </View>
                             </View>
                         </TouchableOpacity>
@@ -94,9 +99,18 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         marginTop: 8,
         margin: 5,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+
+        elevation: 5,
     },
 
-    spends: {
+    expense: {
         borderRadius: 5,
         padding: 5,
         margin: 3,
@@ -105,7 +119,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
 
-    sailse: {
+    sale: {
         borderRadius: 5,
         padding: 5,
         margin: 3,
@@ -114,7 +128,7 @@ const styles = StyleSheet.create({
         color: "black",
     },
 
-    gaint: {
+    profit: {
         borderRadius: 5,
         padding: 5,
         margin: 3,
