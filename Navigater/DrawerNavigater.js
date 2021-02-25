@@ -10,6 +10,7 @@ import ItemPage from "../Screens/ItemPage";
 import DisplayData from "../Screens/DisplayData";
 import LoginPage from "../Screens/LoginPage";
 import logo from "../Screens/logo";
+import AccountBalance from "../Screens/AccountBalance";
 function Notifications() {
     return (
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -22,8 +23,9 @@ const Drawer = createDrawerNavigator();
 
 function MyDrawer() {
     return (
-        <Drawer.Navigator initialRouteName="ItemPage" drawerContent={(props) => <DrawerContent {...props} />}>
+        <Drawer.Navigator initialRouteName="AccountBalance" drawerContent={(props) => <DrawerContent {...props} />}>
             <Drawer.Screen name="ItemPage" component={ItemPage} />
+            <Drawer.Screen name="AccountBalance" component={AccountBalance} />
             <Drawer.Screen name="SecondItem" component={SecondItem} />
             <Drawer.Screen name="DisplayData" component={DisplayData} />
             <Drawer.Screen name="LoginPage" component={LoginPage} />

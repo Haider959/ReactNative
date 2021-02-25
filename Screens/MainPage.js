@@ -10,7 +10,7 @@ const MainPage = () => {
 
     useEffect(
         () => {
-            fetch(URL.Solutions)
+            fetch(URL.AccountBalance)
                 .then((response) => response.json())
                 .then((data) => SetData(data))
                 .catch((error) => console.error(error))

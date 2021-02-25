@@ -3,7 +3,6 @@ import axios from "axios";
 import * as StoreData from "./StoreData";
 import * as URL from "./const";
 const Web = () => {};
-const Authorization = "Authorization";
 export const Get = async (Url) => {
     return axios({
         method: "GET",
@@ -20,6 +19,7 @@ export const Get = async (Url) => {
             return "Faild";
         });
 };
+
 export const Post = async (Url, data) => {
     return axios({
         method: "POST",
@@ -46,7 +46,7 @@ export const Login = async (Url, data) => {
     })
         .then((response) => {
             const token = response.data.token;
-            axios.defaults.headers.common[Authorization] = `Bearer ${token}`;
+            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
             StoreData.storeData("token", token);
             return true;
         })
@@ -57,12 +57,13 @@ export const Login = async (Url, data) => {
 };
 
 export const Refrash = () => {
+    //StoreData.storeData("token", "");
     return StoreData.getData("token").then((token) => {
-        axios.defaults.headers.common[Authorization] = `Bearer ${token}`;
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         // I("!!! Refrashed !!!", "g");
         // I(token);
         if (token.length > 10) return true;
-        return true;
+        return false;
     });
 };
 

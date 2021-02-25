@@ -1,66 +1,120 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { TouchableOpacity, StyleSheet, Button, Text, View, ActivityIndicator, FlatList, Dimensions } from "react-native";
 import * as URL from "../const.js";
 import { AntDesign } from "@expo/vector-icons";
-
+import * as Web from "../Web";
 import Back from "../Headers/Back";
-function DisplayData({ route, navigation }) {
-    const item = [route.params];
-    //   console.log(item);
+const DisplayData = ({ route, navigation }) => {
+    const [otherData, setOtherData] = useState([]);
+    const [dataLoding, finishLoading] = useState(false);
+    const [listIndex, setListIndex] = useState(0);
+    const [canLoadMore, setCanLoadMore] = useState(true);
+    const pageSize = 20;
+    const dataToGet = route.params;
+    const hundleData = { pageIndex: listIndex, pageSize: pageSize, companyId: dataToGet.companyId, currencyId: dataToGet.currencyId };
+
+    useEffect(() => {
+        Web.Post(URL.AccountMovements, hundleData)
+            .then((response) => {
+                setOtherData(response.data);
+                setListIndex(listIndex + pageSize);
+                finishLoading(false);
+            })
+            .catch((err) => console.log(err));
+    }, []);
+
+    const loadMore = () => {
+        if (canLoadMore) {
+            const hundleData = {
+                pageIndex: listIndex,
+                pageSize: pageSize,
+                companyId: dataToGet.companyId,
+                currencyId: dataToGet.currencyId,
+            };
+
+            Web.Post(URL.AccountMovements, hundleData)
+                .then((response) => {
+                    if (response.data.length < pageSize) setCanLoadMore(false);
+                    else setListIndex(listIndex + pageSize);
+                    setOtherData([...otherData, ...response.data]);
+                })
+                .catch((err) => console.log(err));
+        }
+    };
+
     return (
         <View>
             <Back title="DisplayData" navigation={navigation} />
-            <FlatList
-                style={styles.listStyle}
-                keyExtractor={(itemKey) => itemKey.id.toString()}
-                data={item}
-                renderItem={({ item }) => (
-                    <TouchableOpacity style={styles.Card} onPress={() => {}}>
-                        <View>
-                            <View style={styles.groped}>
-                                <Text style={styles.constText}>المصاريف</Text>
-                                <Text style={styles.expense}>{item.expense1} د.ع</Text>
-                                <Text style={styles.expense}>$ {item.expense2}</Text>
+            {dataLoding ? (
+                <ActivityIndicator></ActivityIndicator>
+            ) : (
+                <FlatList
+                    onEndReached={loadMore}
+                    onEndReachedThreshold={1}
+                    style={STY.listStyle}
+                    keyExtractor={(itemKey) => `${itemKey.id}`}
+                    data={otherData}
+                    renderItem={({ item }) => (
+                        <View style={STY.Card}>
+                            <View style={STY.Labels}>
+                                <Text style={STY.Lab}>نوع العملة</Text>
+                                <Text>الرصيد</Text>
+                                <Text>المبلغ</Text>
                             </View>
-                            <View style={{ flexDirection: "row", margin: 5 }}>
-                                <Text style={styles.constDate}>{item.date}</Text>
-                                <AntDesign name="calendar" size={20} color="gray" />
-                            </View>
-                        </View>
-                        <View
-                            style={{
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                            }}>
-                            <View style={styles.groped}>
-                                <Text style={styles.constText}>المبيعات والارجعات</Text>
-                                <Text style={styles.sale}>{item.sale1} د.ع</Text>
-                                <Text style={styles.sale}>$ {item.sale2}</Text>
-                                <Text style={styles.constText}>الارباح</Text>
-                                <Text style={styles.profit}>{item.profit1} د.ع</Text>
-                                <Text style={styles.profit}>$ {item.profit2}</Text>
+                            <View style={STY.Labels}>
+                                <Text style={STY.Texts}>قبض بعملتين</Text>
+                                <Text style={STY.Texts}>1,233,432 د.ع</Text>
+                                <Text style={STY.TextsAmount}>1,323,435 د.ع</Text>
                             </View>
                         </View>
-                    </TouchableOpacity>
-                )}
-            />
+                    )}
+                />
+            )}
         </View>
     );
-}
-const styles = StyleSheet.create({
+};
+const STY = StyleSheet.create({
     listStyle: {
         //   backgroundColor: "#e5e5e5",
     },
+
+    Labels: {
+        flexDirection: "row-reverse",
+        textAlign: "center",
+        justifyContent: "space-around",
+        paddingVertical: 5,
+        alignContent: "center",
+    },
+
+    //     Lab:{
+    // alignContent
+    //     },
+
+    Texts: {
+        backgroundColor: "#e5e5e5",
+        fontWeight: "bold",
+        textAlign: "center",
+        padding: 3,
+        borderRadius: 5,
+    },
+    TextsAmount: {
+        backgroundColor: "#d9f1ef",
+        fontWeight: "bold",
+        textAlign: "center",
+        padding: 3,
+        borderRadius: 5,
+    },
+
     Card: {
         flex: 1,
         borderRadius: 10,
         borderColor: "white",
         borderWidth: 5,
         justifyContent: "center",
-        flexDirection: "row",
+        flexDirection: "column",
         backgroundColor: "#fff",
         marginTop: 8,
-        margin: 5,
+        marginHorizontal: 8,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,

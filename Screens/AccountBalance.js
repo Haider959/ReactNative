@@ -6,26 +6,23 @@ import * as URL from "../const.js";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import Header from "../Header";
 import * as Web from "../Web";
-import * as Generation from "../Generation";
-import { Appbar } from "react-native-paper";
 
-const Stack = createStackNavigator();
 const screenSize = Dimensions.get("window");
 let width = screenSize.width;
 if (width > 450) width = 450;
 
-const ItemList = ({ navigation }) => {
-    const [dataLoding, finishLoading] = useState(true);
+const AccountBalance = ({ navigation }) => {
+    const [dataLoding, finishLoading] = useState(false);
     const [Data, setData] = useState([]);
     const [listIndex, setListIndex] = useState(0);
-    const [Switch, setSwitch] = useState(false);
     const [canLoadMore, setCanLoadMore] = useState(true);
-    const [otherData, setOtherData] = useState([]);
     const pageSize = 20;
+    const data = { companyId: 1, pageIndex: listIndex, pageSize: pageSize };
 
     useEffect(() => {
-        let data = { companyId: 1, pageIndex: listIndex, pageSize: pageSize };
-
+        const kk = { pageIndex: 0, pageSize: 20, companyId: 1, currencyId: 2 };
+        navigation.navigate("DisplayData", kk);
+        return;
         Web.Post(URL.AccountBalance, data)
             .then((response) => {
                 setData(response.data);
@@ -36,7 +33,6 @@ const ItemList = ({ navigation }) => {
     }, []);
     const loadMore = () => {
         if (canLoadMore) {
-            let data = { companyId: 1, pageIndex: listIndex, pageSize: pageSize };
             Web.Post(URL.AccountBalance, data)
                 .then((response) => {
                     if (response.data.length < pageSize) setCanLoadMore(false);
@@ -46,83 +42,27 @@ const ItemList = ({ navigation }) => {
                 .catch((err) => console.log(err));
         }
     };
-    const listItemPress = (item) => {
-        navigation.navigate("DisplayData", item);
-    };
+
     const balanceDollarPress = () => {
-        const data = { pageIndex: 0, pageSize: 20, companyId: 3, currencyId: 1 };
+        const data = { companyId: 3, currencyId: 1 };
         Web.Post(URL.AccountMovements, data).then((response) => {
             setOtherData(response.data);
         });
         setSwitch(true);
-        console.log("balanceDollarPress");
+        console.log("$$$$$$$$$");
     };
 
     const balanceDinarPress = () => {
         const data = { pageIndex: 0, pageSize: 20, companyId: 1, currencyId: 2 };
-        Web.Post(URL.AccountMovements, data).then((response) => {
-            setOtherData(response.data);
-        });
-        setSwitch(true);
-        console.log("balanceDinarPress");
+
+        navigation.navigate("DisplayData", data);
+        console.log("تاتتتتت");
     };
 
-    const Back = ({ title, icon = "arrow-forward" }) => {
-        return (
-            <Appbar.Header
-                style={{ display: "flex", width: "100%", justifyContent: "flex-end", flexDirection: "row", backgroundColor: "#fafaf9" }}>
-                <Text style={{ fontSize: 18, alignSelf: "center" }}>{title}</Text>
-                <TouchableOpacity
-                    onPress={() => {
-                        setSwitch(false);
-                    }}>
-                    <Ionicons name={icon} size={30} color="#020204" style={{ marginHorizontal: 15 }} />
-                </TouchableOpacity>
-            </Appbar.Header>
-        );
-    };
-
-    return Switch ? (
+    return (
         <View>
-            <Back title="التفاصيل" />
-            <FlatList
-                style={cardStyle.container}
-                keyExtractor={(itemKey) => `${itemKey.id}`}
-                data={otherData}
-                onEndReached={loadMore}
-                onEndReachedThreshold={3}
-                renderItem={({ item }) => (
-                    <View style={cardStyle.Card}>
-                        <View style={cardStyle.Card}>
-                            <View style={cardStyle.horizontal}>
-                                <Text style={cardStyle.constText}>{item.opType}</Text>
-                                <Ionicons name="person-circle-sharp" size={35} color="#258e7d" style={{ paddingRight: 15 }} />
-                            </View>
-                            <View style={[cardStyle.horizontal, { justifyContent: "space-around", flex: 1, width: "100%" }]}>
-                                <TouchableOpacity style={cardStyle.wido}>
-                                    <Text style={cardStyle.spends}>$ {item.companyId}</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={cardStyle.wido}>
-                                    <Text style={cardStyle.gaint}>{item.description} د.ع</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <View
-                                style={[
-                                    cardStyle.horizontal,
-                                    { justifyContent: "space-around", flex: 1, width: "100%", marginVertical: 10 },
-                                ]}>
-                                <CashState sty={cardStyle.modan} state={item.currencyId} />
-                                <CashState sty={cardStyle.maden} state={item.status} />
-                            </View>
-                        </View>
-                    </View>
-                )}
-            />
-            {/* <ActivityIndicator size="large" color="red" /> */}
-        </View>
-    ) : (
-        <View>
-            <Header title="SecondItem" />
+            <Header title="AccountBalance" />
+            {/* <Button title="load" onPress={loadMore} /> */}
             {dataLoding ? (
                 <ActivityIndicator size="large" color="red" />
             ) : (
@@ -272,7 +212,7 @@ const cardStyle = StyleSheet.create({
     },
 });
 
-export default ItemList;
+export default AccountBalance;
 
 // useEffect(() => {
 //     fetch(URL.Solutions)
